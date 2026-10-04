@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tồn kho — AquaFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .modal-box { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+    .confirmed-row { animation: fadeSlideIn 0.3s ease; }
+    @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-50 overflow-x-hidden">
+
+<!-- Pass groups from Flask to JS -->
+<script>
+  const GROUPS = {{ groups_json | tojson }};
+</script>
+
+<div class="flex">
+  <!-- ===== SIDEBAR ===== -->
+  <div id="sidebar" class="w-64 h-screen bg-gray-900 text-white p-4 sidebar-transition flex flex-col shadow-2xl z-50 sticky top-0 flex-shrink-0 overflow-y-auto">
+      <div class="flex items-center justify-between mb-8 px-2">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+          </div>
+          <h2 class="text-xl font-bold tracking-tight">AquaFlow</h2>
+        </div>
+        <button id="toggleSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-gray-400 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+      <ul class="space-y-1">
+        <li>
+          <a href="/" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            <span class="font-medium">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/purchase" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Đơn mua hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/sale" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <span class="font-medium">Đơn bán hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/inventory" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group bg-blue-600/20 text-blue-400 border border-blue-500/20">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+            <span class="font-medium">Tồn kho</span>
+          </a>
+        </li>
+
+
+        <li>
+          <a href="/customer" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Khách hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/employee" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <span class="font-medium">Nhân viên</span>
+          </a>
+        </li>
+        <li class="pt-4 mt-4 border-t border-white/10">
+          <a href="/logout" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-red-500/50 group-hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <span class="font-medium">Đăng xuất</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 min-h-screen">
+    <!-- Topbar -->
+    <div class="w-full bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm">
+      <div class="flex items-center gap-4">
+        <button id="openSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-gray-100 rounded-xl transition text-gray-600 hidden">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 class="text-xl font-extrabold text-gray-900 tracking-tight ml-4">Quản lý Tồn kho</h1>
+      </div>
+      <button id="btn-add-product"
+        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-sm transition shadow-sm active:scale-95">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Thêm sản phẩm
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-blue-500 cursor-pointer hover:shadow-md transition card-filter" data-filter="all">
+        <p class="text-gray-500 text-sm pointer-events-none">Tổng sản phẩm</p>
+        <p class="text-2xl font-bold text-gray-800 mt-1 pointer-events-none">{{ inventory_data | length }}</p>
+      </div>
+      <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-green-500 cursor-pointer hover:shadow-md transition card-filter" data-filter="instock">
+        <p class="text-gray-500 text-sm pointer-events-none">Còn hàng</p>
+        <p class="text-2xl font-bold text-green-700 mt-1 pointer-events-none">{{ inventory_data | selectattr('quantity', 'gt', 0) | list | length }}</p>
+      </div>
+      <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-red-400 cursor-pointer hover:shadow-md transition card-filter" data-filter="outstock">
+        <p class="text-gray-500 text-sm pointer-events-none">Hết hàng / Chưa nhập</p>
+        <p class="text-2xl font-bold text-red-600 mt-1 pointer-events-none">{{ inventory_data | selectattr('quantity', 'eq', 0) | list | length }}</p>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="px-6 pb-10">
+      <div class="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex items-center gap-3 flex-1">
+            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+            <input id="search-input" type="text" placeholder="Tìm sản phẩm..."
+              class="w-full md:w-auto flex-1 outline-none text-sm text-gray-700 placeholder-gray-400">
+          </div>
+          <div class="text-sm text-gray-500 font-medium whitespace-nowrap">
+            Trạng thái: <span id="current-filter-text" class="text-blue-600">Tất cả sản phẩm</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50 text-gray-500 uppercase text-xs font-bold tracking-wider">
+                <th class="px-5 py-3 border-b">Tên sản phẩm</th>
+                <th class="px-5 py-3 border-b">Loại nắp</th>
+                <th class="px-5 py-3 border-b">Loại chai</th>
+                <th class="px-5 py-3 border-b">Dung tích</th>
+                <th class="px-5 py-3 border-b text-center">Tồn kho</th>
+                <th class="px-5 py-3 border-b">Cập nhật cuối</th>
+                <th class="px-5 py-3 border-b text-center">Tác vụ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in inventory_data %}
+              <tr class="border-b hover:bg-gray-50/60 transition-colors inventory-row" data-name="{{ item.product_name | lower }}" data-qty="{{ item.quantity }}">
+                <td class="px-5 py-3 font-semibold text-gray-800 whitespace-nowrap">{{ item.product_name }}</td>
+                <td class="px-5 py-3 text-gray-500 text-sm">{{ item.cap_type or '—' }}</td>
+                <td class="px-5 py-3 text-gray-500 text-sm">{{ item.bottle_type or '—' }}</td>
+                <td class="px-5 py-3 text-gray-500 text-sm">{{ item.capacity or '—' }}</td>
+                <td class="px-5 py-3 text-center">
+                  {% if item.quantity == 0 %}
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">Hết hàng</span>
+                  {% elif item.quantity <= 10 %}
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">{{ item.quantity }}</span>
+                  {% else %}
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">{{ item.quantity }}</span>
+                  {% endif %}
+                </td>
+                <td class="px-5 py-3 text-gray-400 text-xs whitespace-nowrap">{{ item.last_updated }}</td>
+                <td class="px-5 py-3">
+                  <div class="flex items-center justify-center gap-1">
+                    <!-- Chỉnh sửa giá -->
+                    <button
+                      data-id="{{ item.product_id }}" data-name="{{ item.product_name }}" data-prices="{{ item.prices_by_group | tojson | forceescape }}"
+                      class="btn-edit-price p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" title="Chỉnh sửa giá">
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                    </button>
+                    <!-- Nhập thêm hàng -->
+                    <button
+                      data-id="{{ item.product_id }}" data-name="{{ item.product_name }}" data-qty="{{ item.quantity }}"
+                      class="btn-add-stock p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition" title="Nhập thêm hàng">
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if not inventory_data %}
+          <div class="text-center py-16 text-gray-400">
+            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z"/>
+            </svg>
+            <p class="font-medium">Chưa có sản phẩm nào</p>
+            <p class="text-sm mt-1">Bấm "Thêm sản phẩm" để bắt đầu</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div><!-- end main -->
+</div>
+
+
+<!-- ================================================================ -->
+<!-- MODAL: Thêm sản phẩm mới                                          -->
+<!-- ================================================================ -->
+<div id="modal-add-product" class="fixed inset-0 z-[9998] flex items-center justify-center hidden">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-add-product-backdrop"></div>
+  <div id="modal-add-product-box" class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-4 max-h-[92vh] flex flex-col scale-95 opacity-0">
+    <!-- Header -->
+    <div class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+      <div>
+        <h3 class="font-bold text-gray-800 text-lg">Thêm sản phẩm mới</h3>
+        <p class="text-sm text-gray-400 mt-0.5">Thông tin, giá bán và tồn kho ban đầu</p>
+      </div>
+      <button onclick="closeModal('modal-add-product','modal-add-product-box')" class="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Body scrollable -->
+    <div class="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+      <!-- Thông tin cơ bản -->
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tên sản phẩm <span class="text-red-500">*</span></label>
+        <input id="new-product-name" type="text" placeholder="VD: Bình nước 20L nắp xanh"
+          class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Loại nắp</label>
+          <input id="new-cap-type" type="text" placeholder="Nắp xanh"
+            class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Loại chai</label>
+          <input id="new-bottle-type" type="text" placeholder="Bình nhựa"
+            class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Dung tích</label>
+          <input id="new-capacity" type="text" placeholder="20L"
+            class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+        </div>
+      </div>
+
+      <!-- Bảng giá tương tác -->
+      <div class="border border-gray-200 rounded-2xl overflow-hidden">
+        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Bảng giá theo loại khách</p>
+          <span class="text-xs text-gray-400">Chọn nhóm → nhập giá → xác nhận</span>
+        </div>
+
+        <!-- Dòng nhập giá -->
+        <div class="px-4 py-4 flex items-end gap-3 border-b border-gray-100">
+          <div class="flex-1">
+            <label class="block text-xs text-gray-500 mb-1">Loại khách</label>
+            <select id="new-group-select" class="w-full border border-gray-200 rounded-xl p-2.5 pr-5 text-sm outline-none focus:ring-2 focus:ring-purple-400 bg-white transition">
+              <option value="">— Chọn loại khách —</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs text-gray-500 mb-1">Giá bán (VNĐ)</label>
+            <input id="new-price-input" type="number" min="0" placeholder="0"
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-purple-400 transition">
+          </div>
+          <button id="new-price-confirm-btn" type="button"
+            class="flex-shrink-0 mb-0.5 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition active:scale-95">
+            Xác nhận
+          </button>
+        </div>
+
+        <!-- Danh sách giá đã xác nhận -->
+        <div id="confirmed-prices-list" class="px-4 py-3 space-y-2 min-h-[48px]">
+          <p id="no-prices-msg" class="text-xs text-gray-400 italic">Chưa xác nhận giá cho nhóm nào</p>
+        </div>
+      </div>
+
+      <!-- Tồn kho ban đầu -->
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Số lượng ban đầu</label>
+        <input id="new-init-qty" type="number" min="0" value="0"
+          class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end flex-shrink-0">
+      <button onclick="closeModal('modal-add-product','modal-add-product-box')"
+        class="px-5 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95">Hủy</button>
+      <button id="btn-submit-add-product"
+        class="px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition active:scale-95">Thêm sản phẩm</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================ -->
+<!-- MODAL: Chỉnh sửa giá                                             -->
+<!-- ================================================================ -->
+<div id="modal-price" class="fixed inset-0 z-[9998] flex items-center justify-center hidden">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-price-backdrop"></div>
+  <div id="modal-price-box" class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 scale-95 opacity-0">
+    <div class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
+      <div>
+        <h3 class="font-bold text-gray-800 text-base">Chỉnh sửa bảng giá</h3>
+        <p id="modal-price-subtitle" class="text-sm text-purple-600 font-medium mt-0.5 truncate max-w-[200px]"></p>
+      </div>
+      <button onclick="closeModal('modal-price','modal-price-box')" class="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="px-6 py-4 space-y-3">
+      <input type="hidden" id="price-product-id">
+
+      <!-- Dòng chọn nhóm + nhập giá -->
+      <div class="flex items-end gap-2">
+        <div class="flex-1">
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Loại khách</label>
+          <select id="edit-group-select" class="w-full border border-gray-200 pr-5 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-purple-400 bg-white">
+            <option value="">— Chọn —</option>
+          </select>
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Giá bán (VNĐ)</label>
+          <input id="edit-price-input" type="number" min="0" placeholder="0"
+            class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-purple-400">
+        </div>
+        <button id="edit-price-confirm-btn" type="button"
+          class="flex-shrink-0 mb-0.5 px-3 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition active:scale-95">
+          Lưu
+        </button>
+      </div>
+
+      <!-- Giá đã lưu (giá > 0) -->
+      <div>
+        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Giá hiện tại</p>
+        <div id="edit-saved-prices" class="space-y-1.5"></div>
+      </div>
+    </div>
+
+    <div class="px-6 pb-5 flex justify-end">
+      <button onclick="closeModal('modal-price','modal-price-box')"
+        class="px-5 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95">Đóng</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================ -->
+<!-- MODAL: Cập nhật tồn kho                                           -->
+<!-- ================================================================ -->
+<div id="modal-update-qty" class="fixed inset-0 z-[9998] flex items-center justify-center hidden">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-update-qty-backdrop"></div>
+  <div id="modal-update-qty-box" class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 scale-95 opacity-0">
+    <div class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
+      <div>
+        <h3 id="modal-update-title" class="font-bold text-gray-800 text-base"></h3>
+        <p id="modal-update-subtitle" class="text-sm text-gray-400 mt-0.5"></p>
+      </div>
+      <button onclick="closeModal('modal-update-qty','modal-update-qty-box')" class="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="px-6 py-5 space-y-4">
+      <input type="hidden" id="update-product-id">
+      <input type="hidden" id="update-mode">
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1" id="update-qty-label">Số lượng mới</label>
+        <input id="update-qty-value" type="number" min="0" value="0"
+          class="w-full border border-gray-200 rounded-xl p-3 text-lg font-bold outline-none focus:ring-2 focus:ring-blue-400 transition text-center">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ghi chú (tuỳ chọn)</label>
+        <input id="update-note" type="text" placeholder="VD: Nhập từ kho Bình Dương..."
+          class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+      </div>
+    </div>
+    <div class="px-6 pb-5 flex gap-2 justify-end">
+      <button onclick="closeModal('modal-update-qty','modal-update-qty-box')"
+        class="px-5 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95">Hủy</button>
+      <button id="btn-submit-update-qty"
+        class="px-5 py-2 rounded-xl text-sm font-semibold text-white transition active:scale-95 bg-blue-600 hover:bg-blue-700">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container" class="fixed top-5 right-5 z-[10000] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<!-- ================================================================ -->
+<!-- JAVASCRIPT                                                         -->
+<!-- ================================================================ -->
+<script src="/static/js/inventory.js"></script>
+{% include 'chatbot.html' %}
+</body>
+</html>

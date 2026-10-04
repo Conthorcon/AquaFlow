@@ -1,0 +1,171 @@
+<!-- Chatbot Widget -->
+<style>
+    #chatbot-window { transition: all 0.3s ease-in-out; transform-origin: bottom right; }
+    .bot-msg p { margin-bottom: 0.5rem; }
+    .bot-msg p:last-child { margin-bottom: 0; }
+    .bot-msg table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; font-size: 0.85rem;}
+    .bot-msg th, .bot-msg td { border: 1px solid #e2e8f0; padding: 0.3rem; text-align: left;}
+    .bot-msg th { background-color: #f8fafc; font-weight: bold;}
+    .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<div id="chatbot-container" class="fixed bottom-6 right-6 z-50">
+    <!-- Chatbot Toggle Button -->
+    <button id="chatbot-toggle" onclick="toggleChatbot()" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-105">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    </button>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-window" class="hidden absolute bottom-20 right-0 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col" style="height: 500px; max-height: 80vh;">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-4 justify-between flex items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <h3 class="font-bold">AquaFlow AI</h3>
+            </div>
+            <button onclick="toggleChatbot()" class="text-white hover:text-gray-200 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col space-y-3">
+            <!-- Welcome message -->
+            <div class="flex justify-start">
+                <div class="bg-white text-gray-800 text-sm p-3 rounded-2xl rounded-tl-sm border border-gray-200 shadow-sm max-w-[85%]">
+                    Xin chào! Tôi có thể giúp bạn thống kê, tra cứu số liệu nào từ hệ thống hôm nay?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 bg-white border-t border-gray-200 flex items-center space-x-2">
+            <input type="text" id="chat-input" class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Hỏi về doanh thu, kho..." onkeypress="handleChatKey(event)">
+            <button onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full flex items-center justify-center transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleChatbot() {
+        const windowEl = document.getElementById('chatbot-window');
+        if (windowEl.classList.contains('hidden')) {
+            windowEl.classList.remove('hidden');
+            document.getElementById('chat-input').focus();
+        } else {
+            windowEl.classList.add('hidden');
+        }
+    }
+
+    function handleChatKey(event) {
+        if (event.key === 'Enter') {
+            sendChatMessage();
+        }
+    }
+
+    async function sendChatMessage() {
+        const inputEl = document.getElementById('chat-input');
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        // Clear input
+        inputEl.value = '';
+
+        // Add user message to UI
+        appendMessage(text, 'user');
+
+        // Show loading indicator
+        const loadingId = appendLoading();
+
+        try {
+            const res = await fetch('/api/chatbot/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            
+            removeLoading(loadingId);
+            if(data.response) {
+                appendMessage(data.response, 'bot');
+            } else {
+                appendMessage('Xin lỗi, tôi không thể xử lý yêu cầu lúc này.', 'bot');
+            }
+        } catch (err) {
+            removeLoading(loadingId);
+            appendMessage('Đã xảy ra lỗi khi kết nối với server.', 'bot');
+            console.error(err);
+        }
+    }
+
+    function appendMessage(text, sender) {
+        const container = document.getElementById('chat-messages');
+        const d = document.createElement('div');
+        
+        if (sender === 'user') {
+            d.className = 'flex justify-end';
+            d.innerHTML = `
+                <div class="bg-blue-600 text-white text-sm p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%]">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+        } else {
+            d.className = 'flex justify-start';
+            // Use marked.js if available, otherwise fallback to escape
+            const parsedText = typeof marked !== 'undefined' ? marked.parse(text) : `<p>${escapeHtml(text)}</p>`;
+            d.innerHTML = `
+                <div class="bot-msg bg-white text-gray-800 text-sm p-3 rounded-2xl rounded-tl-sm border border-gray-200 shadow-sm max-w-[90%] overflow-x-auto">
+                    ${parsedText}
+                </div>
+            `;
+        }
+        
+        container.appendChild(d);
+        scrollToBottom();
+    }
+
+    function appendLoading() {
+        const container = document.getElementById('chat-messages');
+        const id = 'loader-' + Date.now();
+        const d = document.createElement('div');
+        d.id = id;
+        d.className = 'flex justify-start';
+        d.innerHTML = `
+            <div class="bg-white text-gray-800 p-3 rounded-2xl rounded-tl-sm border border-gray-200 shadow-sm">
+                <div class="loader"></div>
+            </div>
+        `;
+        container.appendChild(d);
+        scrollToBottom();
+        return id;
+    }
+
+    function removeLoading(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    function scrollToBottom() {
+        const container = document.getElementById('chat-messages');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function escapeHtml(unsafe) {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    }
+</script>

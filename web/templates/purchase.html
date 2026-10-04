@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đơn mua hàng - AquaFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965567.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* body { font-family: 'Inter', sans-serif; }
+    .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .glass-effect { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    } */
+    body { font-family: 'Inter', sans-serif; }
+    .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-gray-900 overflow-x-hidden">
+
+<div class="flex">
+    <!-- Sidebar (Same as shared) -->
+     <div id="sidebar" class="w-64 h-screen bg-gray-900 text-white p-4 sidebar-transition flex flex-col shadow-2xl z-50 sticky top-0 flex-shrink-0 overflow-y-auto">
+      <div class="flex items-center justify-between mb-8 px-2">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+          </div>
+          <h2 class="text-xl font-bold tracking-tight">AquaFlow</h2>
+        </div>
+        <button id="toggleSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-gray-400 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+      <ul class="space-y-1">
+        <li>
+          <a href="/" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            <span class="font-medium">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/purchase" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group bg-blue-600/20 text-blue-400 border border-blue-500/20">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Đơn mua hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/sale" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group ">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <span class="font-medium">Đơn bán hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/inventory" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+            <span class="font-medium">Tồn kho</span>
+          </a>
+        </li>
+
+
+        <li>
+          <a href="/customer" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Khách hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/employee" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <span class="font-medium">Nhân viên</span>
+          </a>
+        </li>
+        <li class="pt-4 mt-4 border-t border-white/10">
+          <a href="/logout" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-red-500/50 group-hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <span class="font-medium">Đăng xuất</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 min-h-screen flex flex-col">
+        <!-- Top Header -->
+        <header class="h-16 bg-white sticky top-0 z-40 border-b border-gray-200 px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <button id="openSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-gray-100 rounded-xl transition-all duration-200 text-gray-600 hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">Quản lý nhập hàng</h1>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                
+                <!-- <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all shadow-lg shadow-blue-500/25 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span>Nhập hàng</span>
+                </button> -->
+                <button onclick="openModal()"
+                    class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-sm transition shadow-sm active:scale-95">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Nhập hàng
+                </button>
+            </div>
+        </header>
+
+        <main class="p-6 flex-1">
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4 fade-in">
+                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tổng đơn mua</p>
+                        <p id="stat-total-count" class="text-3xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4 fade-in" style="animation-delay: 0.1s;">
+                    <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tổng chi phí</p>
+                        <p id="stat-total-amount" class="text-3xl font-bold text-gray-900">0đ</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4 fade-in" style="animation-delay: 0.2s;">
+                    <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Đơn gần đây nhất</p>
+                        <p id="stat-latest-date" class="text-xl font-bold text-gray-700">--/--/----</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 fade-in" style="animation-delay: 0.3s;">
+                <div class="flex flex-col lg:flex-row lg:items-end gap-6">
+                    <!-- Mode Toggle -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase ml-1">Chế độ hiển thị</label>
+                        <div class="flex bg-gray-100 p-1 rounded-xl w-fit">
+                            <button id="mode-all" onclick="setFilterMode('all')" 
+                                class="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white shadow-sm text-blue-600">
+                                Tất cả
+                            </button>
+                            <button id="mode-time" onclick="setFilterMode('time')" 
+                                class="px-4 py-2 rounded-lg text-sm font-semibold transition-all text-gray-500 hover:text-gray-700">
+                                Theo thời gian
+                            </button>
+                        </div>
+                        <input type="hidden" id="filter-mode-input" value="default">
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="flex-1 space-y-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase ml-1">Tìm kiếm</label>
+                        <div class="relative">
+                            <svg class="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+                            <input id="search-name" type="text" placeholder="Tên sản phẩm / mô tả..." class="w-full bg-gray-50 border-none p-2.5 pl-11 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="w-full lg:w-48 space-y-2">
+                        <div class="flex justify-between items-center ml-1">
+                            <label class="block text-xs font-bold text-gray-400 uppercase">Phân loại</label>
+                            <button onclick="openCategoryModal()" class="text-[10px] font-bold text-blue-500 hover:text-blue-700 uppercase transition-colors">Quản lý</button>
+                        </div>
+                        <select id="filter-category" class="w-full bg-gray-50 border-none p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium transition-all">
+                            <option value="">Tất cả phân loại</option>
+                            <!-- JS will populate -->
+                        </select>
+                    </div>
+
+                    <!-- Time Inputs -->
+                    <div id="time-filter-inputs" class="grid grid-cols-3 gap-3 flex-1 opacity-40 pointer-events-none transition-all duration-300">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase ml-1">Ngày</label>
+                            <input type="number" id="filter-day" placeholder="DD" class="w-full bg-gray-50 border-none p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase ml-1">Tháng</label>
+                            <input type="number" id="filter-month" placeholder="MM" class="w-full bg-gray-50 border-none p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase ml-1">Năm</label>
+                            <input type="number" id="filter-year" placeholder="YYYY" class="w-full bg-gray-50 border-none p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="lg:w-32">
+                        <button onclick="applyFilter()" class="w-full bg-gray-900 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                            Lọc
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Table -->
+            <div class="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden fade-in" style="animation-delay: 0.4s;">
+                <!-- <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-gray-800">Danh sách đơn mua hàng</h2>
+                    <span id="result-count" class="text-xs font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full uppercase">0 kết quả</span>
+                </div> -->
+    
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 uppercase text-xs font-bold tracking-wider">
+                                <th class="px-5 py-3 border-b">Sản phẩm / Mô tả</th>
+                                <th class="px-5 py-3 border-b">Ngày nhập</th>
+                                <th class="px-5 py-3 border-b">Phân loại</th>
+                                <th class="px-5 py-3 border-b text-right">Số tiền (VNĐ)</th>
+                                <th class="px-5 py-3 border-b text-center">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchase-table-body" class="divide-y divide-gray-50">
+                            <!-- JS will populate -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="hidden fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 transform scale-95 transition-all duration-300" id="modal-content">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-black text-gray-900 tracking-tight">Thêm đơn mua mới</h3>
+            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        
+        
+        <form id="add-purchase-form" class="space-y-5">
+            <input type="hidden" name="id" id="purchase-id" />
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Mô tả nhập hàng</label>
+                <input name="description" required class="w-full border-none bg-gray-100 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-medium placeholder-gray-400 transition-all" placeholder="Ví dụ: Nhập 100 nắp xanh..." />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Số tiền</label>
+                    <input name="total_amount" type="number" required class="w-full border-none bg-gray-100 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-medium placeholder-gray-400 transition-all" placeholder="VNĐ" />
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Phân loại</label>
+                    <select name="category" id="form-category" required class="w-full border-none bg-gray-100 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-medium transition-all">
+                        <!-- JS will populate -->
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl font-black text-lg shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1 active:scale-95 mt-4">
+                Lưu đơn mua
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Category Management Modal -->
+<div id="category-modal" class="hidden fixed inset-0 z-[110] bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 transform scale-95 transition-all duration-300" id="category-modal-content">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-black text-gray-900 tracking-tight">Quản lý phân loại</h3>
+            <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <!-- Add Category Form -->
+        <div class="mb-8">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-3 ml-1">Thêm phân loại mới</label>
+            <div class="flex gap-2">
+                <input type="text" id="new-category-name" placeholder="Ví dụ: Thiết bị, Thuê nhà..." 
+                    class="flex-1 bg-gray-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium transition-all">
+                <button onclick="addCategory()" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl transition-all shadow-lg shadow-blue-200 active:scale-95">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Category List -->
+        <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-3 ml-1">Danh sách hiện tại</label>
+            <div id="category-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                <!-- JS will populate -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed bottom-8 right-8 z-[200] bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 transition-all duration-500">
+    <div id="toast-icon" class="w-8 h-8 rounded-lg flex items-center justify-center font-bold">!</div>
+    <span id="toast-msg" class="font-medium text-sm"></span>
+</div>
+
+<!-- Modal Xác nhận (Confirm) -->
+<div id="modal-confirm" class="fixed inset-0 z-[10000] flex items-center justify-center hidden">
+    <div id="modal-confirm-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div id="modal-confirm-box" class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm mx-4 transform scale-95 opacity-0 flex flex-col p-8 text-center transition-all duration-300">
+        <div class="mx-auto mb-6 w-16 h-16 rounded-2xl flex items-center justify-center bg-amber-50 text-amber-500">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <h3 id="modal-confirm-title" class="text-xl font-black text-gray-900 mb-2 tracking-tight"></h3>
+        <p id="modal-confirm-message" class="text-sm font-medium text-gray-500 mb-8"></p>
+        <div class="flex gap-4">
+            <button id="modal-confirm-cancel" class="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition active:scale-95">Hủy</button>
+            <button id="modal-confirm-ok" class="flex-1 py-4 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition shadow-lg shadow-red-500/30 active:scale-95">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/purchase.js"></script>
+<script>
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const openBtn = document.getElementById('openSidebar');
+        sb.classList.toggle('w-64');
+        sb.classList.toggle('w-0');
+        sb.classList.toggle('p-4');
+        sb.classList.toggle('p-0');
+        openBtn.classList.toggle('hidden');
+    }
+
+    function openModal() {
+        const m = document.getElementById('modal');
+        const mc = document.getElementById('modal-content');
+        m.classList.remove('hidden');
+        setTimeout(() => {
+            mc.classList.remove('scale-95');
+            mc.classList.add('scale-100');
+        }, 10);
+    }
+
+    // Nút "Nhập hàng" chính
+    const btnMainAdd = document.querySelector('button[onclick="openModal()"]');
+    if (btnMainAdd) {
+        btnMainAdd.onclick = (e) => {
+            e.preventDefault();
+            const m = document.getElementById('modal');
+            const form = document.getElementById('add-purchase-form');
+            
+            // Reset to Add mode
+            m.querySelector('h3').textContent = 'Thêm đơn mua mới';
+            form.querySelector('button[type="submit"]').textContent = 'Lưu đơn mua';
+            document.getElementById('purchase-id').value = '';
+            form.reset();
+            
+            openModal();
+        };
+    }
+
+    function closeModal() {
+        const m = document.getElementById('modal');
+        const mc = document.getElementById('modal-content');
+        mc.classList.remove('scale-100');
+        mc.classList.add('scale-95');
+        setTimeout(() => m.classList.add('hidden'), 200);
+    }
+
+    function openCategoryModal() {
+        const m = document.getElementById('category-modal');
+        const mc = document.getElementById('category-modal-content');
+        m.classList.remove('hidden');
+        loadCategoriesForManagement();
+        setTimeout(() => {
+            mc.classList.remove('scale-95');
+            mc.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeCategoryModal() {
+        const m = document.getElementById('category-modal');
+        const mc = document.getElementById('category-modal-content');
+        mc.classList.remove('scale-100');
+        mc.classList.add('scale-95');
+        setTimeout(() => m.classList.add('hidden'), 200);
+    }
+</script>
+
+{% include 'chatbot.html' %}
+</body>
+</html>

@@ -1,0 +1,115 @@
+### Description
+- Chatbot thông qua Zalobot dùng để:
++ Đặt hàng
++ Cung cấp thông tin đơn hàng
++ Cung cấp thông tin sản phẩm
+
+
+###Dashboard
+- Đơn bán hàng
++ Ai bán?
++ Bán những gì?
++ Thời gian
++ Bao nhiêu
++ Trạng thái
++ Ghi chú
++ Thuế
+
+- Đơn mua hàng
++ Ai mua?
++ Mua những gì?
++ Thời gian
++ Bao nhiêu
++ Trạng thái
++ Ghi chú
++ Thuế
+
+- Quản lý Tồn kho
++ Tên sản phẩm
++ Số lượng
++ Giá
++ Trạng thái
++ Ghi chú
+
+- Quản lý khách hàng
++ Tên khách hàng
++ Số điện thoại
++ Địa chỉ
++ Email
++ Trạng thái
++ Ghi chú
+
+- Quản lý nhân viên
++ Tên nhân viên
++ Số điện thoại
++ Địa chỉ
++ Email
++ Trạng thái
++ Ghi chú
+
+- Đăng ký/đăng nhập
+
+- Thống kê kho
++ Quản lý sản phẩm
++ Đăng nhập/Đăng ký
++ Quản lý khách hàng
++ Quản lý nhân viên
+
+
+### Chart
+- Số đơn bán hàng
++ Theo thời gian (ngày, tháng, năm, tất cả)
++ Theo loại sản phẩm (Loại nắp, Loại bình, dung tích)
++ Theo nhân viên
+- Doanh thu
++ Theo thời gian (ngày, tháng, năm, tất cả)
++ Theo sản phẩm (Loại nắp, Loại bình, dung tích)
+- Chi tiêu 
++ Theo thời gian (ngày, tháng, năm, tất cả)
+
+
+### Flow
+- User (Zalo) -> RAG -> Dashboard -> User (Zalo)
+
+### Plan
+UI (Tailwind + JS) -> UX (Flask + SQL) -> RAG (Langchain) 
+
+- UI/UX
++ 6 pages
+{
+    D0: 1P
+    D1: 2P
+    D2: 3P
+}
+
+- Input orders:
++ OCR -> Vietern (có thể distill/finetune)
+{
+    
+}
+
+
+- Chatbot
++ Zalobot
++ RAG system
++ Luồng dữ liệu
+
+### AI:
+- Read OCR
+- Chatbot order
+
+### Problem
+- Làm sao có thể kết nối dữ liệu riêng của khách hàng riêng biệt cho AI
+
+### Tech Stack
+- CRUD APIs
+
+
+### Finetuning
+- Học các tham số Finetuning
+- Nạp Dataset
+
+### Task 
+- Finetune
+    + Model Query: 
+    + Model Order:

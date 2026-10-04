@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khách hàng — AquaFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .modal-box { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+    .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-gray-50 overflow-x-hidden">
+
+<script>
+  const GROUPS = {{ groups_json | tojson if groups_json else '[]' }};
+</script>
+
+<div class="flex">
+  <!-- Sidebar -->
+  <div id="sidebar" class="w-64 h-screen bg-gray-900 text-white p-4 sidebar-transition flex flex-col shadow-2xl z-50 sticky top-0 flex-shrink-0 overflow-y-auto">
+      <div class="flex items-center justify-between mb-8 px-2">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+          </div>
+          <h2 class="text-xl font-bold tracking-tight">AquaFlow</h2>
+        </div>
+        <button id="toggleSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-gray-400 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+      <ul class="space-y-1">
+        <li>
+          <a href="/" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            <span class="font-medium">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/purchase" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Đơn mua hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/sale" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <span class="font-medium">Đơn bán hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/inventory" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+            <span class="font-medium">Tồn kho</span>
+          </a>
+        </li>
+        <li>
+          <a href="/customer" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group bg-blue-600/20 text-blue-400 border border-blue-500/20">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Khách hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/employee" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <span class="font-medium">Nhân viên</span>
+          </a>
+        </li>
+        <li class="pt-4 mt-4 border-t border-white/10">
+          <a href="/logout" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-red-500/50 group-hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <span class="font-medium">Đăng xuất</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 min-h-screen">
+    <!-- Topbar -->
+    <div class="w-full bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm">
+      <div class="flex items-center gap-4">
+        <button id="openSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-gray-100 rounded-xl transition text-gray-600 hidden">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 class="text-xl font-extrabold text-gray-900 tracking-tight ml-4">Quản lý Khách hàng</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- <button onclick="showHelp()" class="text-gray-500 hover:text-gray-700 font-medium text-sm px-2">Trợ giúp</button> -->
+        <button id="btn-add-customer"
+          class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-sm transition shadow-sm active:scale-95">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Thêm khách hàng
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-blue-500">
+        <p class="text-gray-500 text-sm">Tổng khách hàng</p>
+        <p class="text-2xl font-bold text-gray-800 mt-1">{{ customers | length if customers else 0 }}</p>
+      </div>
+      <!-- Placeholder for more stats if needed -->
+    </div>
+
+    <!-- Table Section -->
+    <div class="px-6 pb-10">
+      <div class="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex items-center gap-3 flex-1">
+            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+            <input id="search-input" type="text" placeholder="Tìm tên khách hàng hoặc khu vực..."
+              class="w-full md:w-auto flex-1 outline-none text-sm text-gray-700 placeholder-gray-400">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50 text-gray-500 uppercase text-xs font-bold tracking-wider">
+                <th class="px-5 py-3 border-b">Tên khách hàng</th>
+                <th class="px-5 py-3 border-b">Số điện thoại</th>
+                <th class="px-5 py-3 border-b">Địa chỉ</th>
+                <th class="px-5 py-3 border-b">Loại khách</th>
+                <th class="px-5 py-3 border-b text-center">Tác vụ</th>
+              </tr>
+            </thead>
+            <tbody id="customer-table-body">
+              <!-- Load via JS -->
+            </tbody>
+          </table>
+          <div id="no-data-msg" class="text-center py-16 text-gray-400 hidden">
+            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <p class="font-medium">Không tìm thấy khách hàng nào</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Thêm khách hàng -->
+<div id="modal-add-customer" class="fixed inset-0 z-[9998] flex items-center justify-center hidden">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-add-customer-backdrop"></div>
+  <div id="modal-add-customer-box" class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 flex flex-col scale-95 opacity-0">
+    <div class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
+      <div>
+        <h3 class="font-bold text-gray-800 text-lg">Thêm khách hàng mới</h3>
+        <p class="text-sm text-gray-400 mt-0.5">Vui lòng điền đầy đủ thông tin bên dưới</p>
+      </div>
+      <button onclick="closeModal('modal-add-customer','modal-add-customer-box')" class="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="px-6 py-5 space-y-4">
+      <input type="hidden" id="edit-cust-id">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tên khách hàng <span class="text-red-500">*</span></label>
+          <input id="new-cust-name" type="text" placeholder="Nguyễn Văn A" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Số điện thoại</label>
+          <input id="new-cust-phone" type="text" placeholder="09xx..." class="w-full border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+        </div>
+      </div>
+
+      <div class="space-y-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+        <p class="text-xs font-bold text-gray-400 uppercase">Thông tin địa chỉ</p>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tên đường / Số nhà</label>
+          <input id="addr-street" type="text" placeholder="123 Lê Lợi" class="w-full border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Phường / Xã</label>
+            <input id="addr-ward" type="text" placeholder="Phường 1" class="w-full border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">TP / Tỉnh</label>
+            <input id="addr-city" type="text" placeholder="TP.HCM" class="w-full border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nhóm khách hàng <span class="text-red-500">*</span></label>
+        <div class="flex gap-2">
+            <select id="new-cust-group" class="flex-1 border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400 bg-white transition"></select>
+            <button id="btn-quick-add-group" type="button" class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition active:scale-95" title="Thêm nhóm mới">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
+      <button onclick="closeModal('modal-add-customer','modal-add-customer-box')" class="px-5 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95">Hủy</button>
+      <button id="btn-submit-customer" class="px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition active:scale-95">Thêm mới</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Thêm nhóm khách hàng -->
+<div id="modal-add-group" class="fixed inset-0 z-[10002] flex items-center justify-center hidden">
+    <div id="modal-add-group-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div id="modal-add-group-box" class="modal-box relative bg-white rounded-3xl shadow-2xl w-full max-w-sm mx-4 transform scale-95 opacity-0 flex flex-col p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-1">Quản lý nhóm</h3>
+        <p class="text-sm text-gray-500 mb-4">Thêm mới hoặc xóa các nhóm khách hàng</p>
+        
+        <div class="flex gap-2 mb-6">
+            <input id="new-group-name" type="text" placeholder="Tên nhóm mới" class="flex-1 border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition">
+            <button id="btn-submit-group" class="px-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition active:scale-95">Thêm</button>
+        </div>
+
+        <div class="border-t border-gray-100 pt-4 max-h-60 overflow-y-auto">
+            <p class="text-[10px] font-bold text-gray-400 uppercase mb-3">Danh sách nhóm hiện có</p>
+            <div id="group-list-container" class="space-y-2">
+                <!-- Load via JS -->
+            </div>
+        </div>
+
+        <button id="modal-add-group-cancel" class="mt-6 w-full py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition active:scale-95">Đóng</button>
+    </div>
+</div>
+
+<!-- Modal Thông báo (Alert) -->
+<div id="modal-alert" class="fixed inset-0 z-[10000] flex items-center justify-center hidden">
+    <div id="modal-alert-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div id="modal-alert-box" class="modal-box relative bg-white rounded-3xl shadow-2xl w-full max-w-sm mx-4 transform scale-95 opacity-0 flex flex-col p-6 text-center">
+        <div id="modal-alert-icon" class="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center"></div>
+        <h3 id="modal-alert-title" class="text-lg font-bold text-gray-900 mb-2"></h3>
+        <p id="modal-alert-message" class="text-sm text-gray-500 mb-6"></p>
+        <button id="modal-alert-ok" class="w-full py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-800 transition active:scale-95">Đã hiểu</button>
+    </div>
+</div>
+
+<!-- Modal Xác nhận (Confirm) -->
+<div id="modal-confirm" class="fixed inset-0 z-[10000] flex items-center justify-center hidden">
+    <div id="modal-confirm-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div id="modal-confirm-box" class="modal-box relative bg-white rounded-3xl shadow-2xl w-full max-w-sm mx-4 transform scale-95 opacity-0 flex flex-col p-6 text-center">
+        <div class="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-amber-100 text-amber-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <h3 id="modal-confirm-title" class="text-lg font-bold text-gray-900 mb-2"></h3>
+        <p id="modal-confirm-message" class="text-sm text-gray-500 mb-6"></p>
+        <div class="flex gap-3">
+            <button id="modal-confirm-cancel" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition active:scale-95">Hủy</button>
+            <button id="modal-confirm-ok" class="flex-1 py-3 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition active:scale-95">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container" class="fixed top-5 right-5 z-[10001] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script src="/static/js/customer.js"></script>
+{% include 'chatbot.html' %}
+</body>
+</html>

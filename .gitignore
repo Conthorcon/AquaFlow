@@ -1,0 +1,9 @@
+*.venv
+*.pyc
+data
+checkpoints
+tests
+datasets
+kaggle
+*.safetensors
+*.whl

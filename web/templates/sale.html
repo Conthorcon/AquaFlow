@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaFlow Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965567.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-gray-100 overflow-x-hidden">
+
+<div class="flex">
+    <div id="sidebar" class="w-64 h-screen bg-gray-900 text-white p-4 sidebar-transition flex flex-col shadow-2xl z-50 sticky top-0 flex-shrink-0 overflow-y-auto">
+      <div class="flex items-center justify-between mb-8 px-2">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+          </div>
+          <h2 class="text-xl font-bold tracking-tight">AquaFlow</h2>
+        </div>
+        <button id="toggleSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-gray-400 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+      <ul class="space-y-1">
+        <li>
+          <a href="/" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            <span class="font-medium">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/purchase" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Đơn mua hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/sale" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group bg-blue-600/20 text-blue-400 border border-blue-500/20">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <span class="font-medium">Đơn bán hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/inventory" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-10 10-2-2m-2-2v10l8 4 8-4V10l-8 4z" /></svg>
+            <span class="font-medium">Tồn kho</span>
+          </a>
+        </li>
+
+
+        <li>
+          <a href="/customer" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-medium">Khách hàng</span>
+          </a>
+        </li>
+        <li>
+          <a href="/employee" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <span class="font-medium">Nhân viên</span>
+          </a>
+        </li>
+        <li class="pt-4 mt-4 border-t border-white/10">
+          <a href="/logout" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-all duration-200 group">
+            <svg class="w-5 h-5 text-red-500/50 group-hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <span class="font-medium">Đăng xuất</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  <div class="flex-1 min-h-screen">
+    <div class="w-full bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 px-6 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <button id="openSidebar" onclick="toggleSidebar()" class="p-2 hover:bg-gray-100 rounded-xl transition-all duration-200 text-gray-600 hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Quản lý bán hàng</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- <a href="/logout" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl font-semibold transition-all duration-200 text-sm">Đăng xuất</a> -->
+      </div>
+    </div>
+
+    <main class="p-6 space-y-6">
+      <div id="dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-blue-500 cursor-pointer hover:shadow-md transition card-filter" data-filter="all">
+          <p class="text-gray-500 text-sm pointer-events-none">Số đơn</p>
+          <p class="text-2xl font-bold text-gray-800 mt-1 pointer-events-none">{{ today_sales }}</p>
+        </div>
+        <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-green-500 cursor-pointer hover:shadow-md transition card-filter" data-filter="all">
+          <p class="text-gray-500 text-sm pointer-events-none">Đang giao</p>
+          <p class="text-2xl font-bold text-green-700 mt-1 pointer-events-none">{{ today_delivering_sales }}</p>
+        </div>
+        <div class="bg-white p-5 shadow-sm rounded-2xl border border-gray-100 border-l-4 border-l-yellow-500 cursor-pointer hover:shadow-md transition card-filter" data-filter="all">
+          <p class="text-gray-500 text-sm pointer-events-none">Đang xử lý</p>
+          <p class="text-2xl font-bold text-yellow-500 mt-1 pointer-events-none">{{ today_pending_sales }}</p>
+        </div>
+      </div>
+  
+      <!-- Bộ lọc đơn hàng -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <div class="flex flex-col md:flex-row md:items-end gap-6">
+          <div class="flex-1">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Chế độ hiển thị</label>
+            <div class="flex bg-gray-100 p-1 rounded-xl w-fit">
+              <button id="mode-default" onclick="setFilterMode('default')" 
+                class="px-4 py-2 rounded-lg text-sm font-semibold transition-all {{ 'bg-white shadow-sm text-blue-600' if filter_mode == 'default' else 'text-gray-500 hover:text-gray-700' }}">
+                Mặc định
+              </button>
+              <button id="mode-time" onclick="setFilterMode('time')" 
+                class="px-4 py-2 rounded-lg text-sm font-semibold transition-all {{ 'bg-white shadow-sm text-blue-600' if filter_mode == 'time' else 'text-gray-500 hover:text-gray-700' }}">
+                Theo thời gian
+              </button>
+            </div>
+            <input type="hidden" id="filter-mode-input" value="{{ filter_mode }}">
+          </div>
+
+          <div id="time-filter-inputs" class="grid grid-cols-3 gap-3 flex-[2] transition-all {{ 'opacity-100' if filter_mode == 'time' else 'opacity-30 pointer-events-none' }}">
+            <div>
+              <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Ngày</label>
+              <input type="number" id="filter-day" placeholder="DD" value="{{ f_day if f_day else '' }}"
+                class="w-full border p-2.5 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none text-sm font-medium">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Tháng</label>
+              <input type="number" id="filter-month" placeholder="MM" value="{{ f_month if f_month else '' }}"
+                class="w-full border p-2.5 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none text-sm font-medium">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Năm</label>
+              <input type="number" id="filter-year" placeholder="YYYY" value="{{ f_year if f_year else '' }}"
+                class="w-full border p-2.5 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none text-sm font-medium">
+            </div>
+          </div>
+
+          <div class="md:w-32">
+            <button onclick="applyFilter()" class="w-full bg-gray-900 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Lọc
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">Thêm đơn</h2>
+          <div class="flex gap-2">
+              <input type="file" id="import-file-input" class="hidden" accept=".csv, .png, .jpg, .jpeg, .webp">
+              <button id="btn-import-file" class="bg-indigo-50 border border-indigo-200 text-indigo-600 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-100 transition flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                  Nhập từ file/ảnh
+              </button>
+          </div>
+      </div>
+
+
+      <div class="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- <input class="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Bên mua" /> -->
+
+        <div class="relative w-full" id="customer-search-container">
+          <div id="input-container" class="flex flex-wrap items-center gap-2 border p-2 rounded focus-within:ring-2 focus-within:ring-blue-400 bg-white min-h-[42px]">
+              
+              <div id="selected-tag" class="hidden flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-sm border border-gray-300">
+                  <span id="tag-text"></span>
+                  <button id="remove-tag" class="ml-2 hover:text-red-500 font-bold">&times;</button>
+              </div>
+
+              <input 
+                  id="customer-input"
+                  class="flex-1 outline-none min-w-[100px] bg-transparent" 
+                  placeholder="Bên mua (Tên khách hàng)" 
+                  autocomplete="off"
+              />
+          </div>
+          <ul id="suggestion-list" class="absolute hidden z-20 w-full bg-white border border-gray-300 mt-1 rounded shadow-xl max-h-60 overflow-auto"></ul>
+        </div>
+
+        <div class="relative w-full group/prod" id="product-logic-container">
+          <div id="product-trigger" class="border p-2 rounded bg-gray-50 cursor-not-allowed flex justify-between items-center transition-all opacity-50 pointer-events-none" title="Vui lòng chọn khách hàng trước">
+              <span id="product-display-text" class="text-gray-400">Thêm sản phẩm & số lượng...</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+          </div>
+
+          <div id="product-popup" class="absolute hidden z-30 w-full md:w-[350px] bg-white border border-gray-300 mt-2 rounded-lg shadow-2xl p-4">
+                <h4 class="text-sm font-bold mb-3 border-b pb-2">Thêm sản phẩm mới</h4>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">TÊN SẢN PHẨM</label>
+                        <div id="selected-tag-product" class="hidden flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-sm border border-gray-300">
+                            <span id="tag-product"></span>
+                            <button id="remove-tag-product" class="ml-2 hover:text-red-500 font-bold">&times;</button>
+                        </div>
+                        <input id="pop-product-name" type="text" class="w-full border p-2 rounded text-sm outline-none focus:ring-1 focus:ring-blue-400" placeholder="Nhập hoặc chọn tên..." autocomplete="off">
+                        <ul id="pop-suggestion-list" class="hidden border border-t-0 max-h-32 overflow-auto bg-gray-50 text-sm"></ul>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 leading-none">SỐ LƯỢNG & GIÁ</label>
+                        <div class="flex items-center gap-2">
+                            <input id="pop-product-qty" type="number" min="1" value="1" class="w-20 border p-2 rounded text-sm outline-none focus:ring-1 focus:ring-blue-400">
+                            <span class="text-xs text-gray-400">x</span>
+                            <div id="pop-product-price-container" class="flex-1 flex items-center border p-2 rounded text-sm bg-white focus-within:ring-1 focus-within:ring-blue-400">
+                                <input id="pop-product-price" type="number" value="0" class="w-full outline-none bg-transparent text-gray-700 font-medium" placeholder="Giá...">
+                                <span class="text-[10px] text-gray-400 ml-1">VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="pop-add-btn" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors font-medium">Xác nhận thêm</button>
+                </div>
+            </div>
+            <div id="product-tags-display" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+
+        <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+            <div class="flex flex-col space-y-1">
+                <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Số điện thoại</label>
+                <input id="customer-phone" class="border p-2 rounded bg-gray-50 text-gray-500 outline-none cursor-not-allowed font-medium" placeholder="Chưa có dữ liệu..." readonly />
+            </div>
+            <div class="flex flex-col space-y-1">
+                <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Địa chỉ</label>
+                <input id="customer-address" class="border p-2 rounded bg-gray-50 text-gray-500 outline-none cursor-not-allowed font-medium" placeholder="Chưa có dữ liệu..." readonly />
+            </div>
+        </div>
+
+        <!-- <input type="datetime-local" class="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none" /> -->
+        <input id="total-amount-input" class="border p-2 rounded bg-gray-50 text-blue-600 font-bold outline-none cursor-not-allowed" placeholder="Thành tiền" readonly />
+        <!-- <input class="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Trạng thái" /> -->
+        <input id="tax-input" class="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Thuế (%)" />
+        <textarea id="note-input" class="border p-2 col-span-1 md:col-span-2 rounded focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Ghi chú"></textarea>
+        <button id="make-order-button" class="col-span-1 md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded font-bold transition">Tạo đơn</button>
+      </div>
+
+      <div class="space-y-12">
+
+        <!-- Đơn Zalo chờ duyệt -->
+        {% if zalo_orders %}
+        <div>
+          <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+            <span class="w-3 h-3 bg-purple-500 rounded-full mr-2"></span>
+            Đơn Zalo chờ duyệt
+          </h3>
+          <div class="overflow-x-auto bg-white shadow-lg rounded-xl border border-gray-100">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold tracking-wider">
+                  <th class="p-4 border-b w-1/4">Khách hàng Zalo</th>
+                  <th class="p-4 border-b w-1/2">Chi tiết đặt hàng</th>
+                  <th class="p-4 border-b text-center">Tác vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for zo in zalo_orders %}
+                <tr class="border-b hover:bg-purple-50/50 transition-colors">
+                    <td class="p-4 text-gray-700 font-medium whitespace-nowrap">{{ zo.zalo_user_id }}</td>
+                    <td class="p-4">
+                        <ul class="space-y-1">
+                            {% for p in zo.parsed.get('products', []) %}
+                            <li class="text-sm font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded w-fit inline-block mb-1">
+                                {{ p.quantity }}x {{ p.name }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="approveZaloOrder('{{ zo.id }}')" class="bg-purple-100 text-purple-700 px-4 py-2 rounded-xl text-xs font-bold uppercase hover:bg-purple-600 hover:text-white transition">
+                            Gửi yêu cầu chốt đơn
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Đơn hàng chưa hoàn thành -->
+        <div>
+          <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+            <span class="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
+            Đơn hàng đang xử lý
+          </h3>
+          <div class="overflow-x-auto bg-white shadow-lg rounded-xl border border-gray-100">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold tracking-wider">
+                  <th class="p-4 border-b">Bên mua</th>
+                  <th class="p-4 border-b">SĐT</th>
+                  <th class="p-4 border-b">Địa chỉ</th>
+                  <th class="p-4 border-b">Sản phẩm</th>
+                  <th class="p-4 border-b">Thời gian</th>
+                  <th class="p-4 border-b">Nhân viên giao</th>
+                  <th class="p-4 border-b">Số tiền</th>
+                  <th class="p-4 border-b">Trạng thái</th>
+                  <!-- <th class="p-4 border-b">Ghi chú</th> -->
+                  <th class="p-4 border-b text-center">Tác vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sale in pending_sales %}
+                <tr class="border-b hover:bg-gray-50/80 transition-colors relative group whitespace-nowrap">
+                    <td class="p-4 text-gray-700 font-medium truncate max-w-[150px]" title="{{ sale["customer_name"] }}">{{ sale["customer_name"] }}</td>
+                    <td class="p-4 text-gray-500 text-sm">{{ sale["customer_phone"] }}</td>
+                    <td class="p-4 text-gray-500 text-sm max-w-[200px] truncate" title="{{ sale['customer_address'] }}">{{ sale["customer_address"] }}</td>
+
+                    <td class="p-4 relative js-tooltip-trigger cursor-pointer truncate max-w-[150px]">
+                        <span class="text-blue-600 underline decoration-dotted font-semibold block truncate">
+                            {{ sale["products"][0]["name"] }} 
+                            {% if sale["products"]|length > 1 %}
+                                <span class="text-xs text-blue-400">(+{{ sale["products"]|length - 1 }})</span>
+                            {% endif %}
+                        </span>
+                        <div class="hidden tooltip-template">
+                            <p class="font-bold border-b border-gray-600 mb-2 pb-1 text-yellow-400">Chi tiết:</p>
+                            <ul class="space-y-1">
+                                {% for p in sale["products"] %}
+                                <li class="flex justify-between gap-4">
+                                    <span class="text-gray-400">{{ p["quantity"] }}x</span>
+                                    <span>{{ p["name"] }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+
+                    <td class="p-4 text-gray-500 text-sm">{{ sale["date_created"] }}</td>
+
+                    <td class="p-4">
+                        <select onchange="assignDelivery('{{ sale.id }}', this.value)" class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 outline-none transition-all">
+                            <option value="">-- Chọn NV --</option>
+                            {% for emp in employees %}
+                            <option value="{{ emp.id }}" {{ 'selected' if sale.delivery_employee_id == emp.id else None }}>{{ emp.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td class="p-4 font-bold text-gray-800">{{ "{:,.0f}".format(sale["price_at_sale"]) }}</td>
+
+                    <td class="p-4">
+                        <button onclick="toggleStatus('{{ sale.id }}', 'delivering')" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-blue-500 hover:text-white transition-all duration-300">
+                           Chờ giao
+                        </button>
+                    </td>
+
+                    <!-- <td class="p-4 text-gray-400 text-sm js-tooltip-trigger cursor-help">
+                        <span class="block max-w-[100px] truncate">{{ sale["note"] if sale["note"] else "-" }}</span>
+                        {% if sale["note"] and sale["note"]|length > 20 %}
+                        <div class="hidden tooltip-template">
+                            <div class="w-64 italic leading-relaxed">{{ sale["note"] }}</div>
+                        </div>
+                        {% endif %}
+                    </td> -->
+                    
+                    <td class="p-4 flex items-center justify-center space-x-2">
+                        <a href="{{ url_for('sale.view', id=sale['id']) }}" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Xem chi tiết">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </a>
+                        <a href="{{ url_for('sale.edit', id=sale['id']) }}" class="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Chỉnh sửa">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </a>
+                        <button onclick="deleteSale('{{ sale['id'] }}', '{{ sale['customer_name'] }}')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Xóa đơn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Đơn hàng đang giao -->
+        <div>
+          <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+            <span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
+            Đơn hàng đang giao
+          </h3>
+          <div class="overflow-x-auto bg-white shadow-lg rounded-xl border border-gray-100">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold tracking-wider">
+                  <th class="p-4 border-b">Bên mua</th>
+                  <th class="p-4 border-b">SĐT</th>
+                  <th class="p-4 border-b">Địa chỉ</th>
+                  <th class="p-4 border-b">Sản phẩm</th>
+                  <th class="p-4 border-b">Thời gian</th>
+                  <th class="p-4 border-b">Nhân viên giao</th>
+                  <th class="p-4 border-b">Số tiền</th>
+                  <th class="p-4 border-b">Trạng thái</th>
+                  <!-- <th class="p-4 border-b">Ghi chú</th> -->
+                  <th class="p-4 border-b text-center">Tác vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sale in delivering_sales %}
+                <tr class="border-b hover:bg-gray-50/80 transition-colors relative group whitespace-nowrap">
+                    <td class="p-4 text-gray-700 font-medium truncate max-w-[150px]" title="{{ sale["customer_name"] }}">{{ sale["customer_name"] }}</td>
+                    <td class="p-4 text-gray-500 text-sm">{{ sale["customer_phone"] }}</td>
+                    <td class="p-4 text-gray-500 text-sm max-w-[200px] truncate" title="{{ sale['customer_address'] }}">{{ sale["customer_address"] }}</td>
+
+                    <td class="p-4 relative js-tooltip-trigger cursor-pointer truncate max-w-[150px]">
+                        <span class="text-blue-600 underline decoration-dotted font-semibold block truncate">
+                            {{ sale["products"][0]["name"] }} 
+                            {% if sale["products"]|length > 1 %}
+                                <span class="text-xs text-blue-400">(+{{ sale["products"]|length - 1 }})</span>
+                            {% endif %}
+                        </span>
+                        <div class="hidden tooltip-template">
+                            <p class="font-bold border-b border-gray-600 mb-2 pb-1 text-yellow-400">Chi tiết:</p>
+                            <ul class="space-y-1">
+                                {% for p in sale["products"] %}
+                                <li class="flex justify-between gap-4">
+                                    <span class="text-gray-400">{{ p["quantity"] }}x</span>
+                                    <span>{{ p["name"] }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+
+                    <td class="p-4 text-gray-500 text-sm">{{ sale["date_delivery"] }}</td>
+
+                    <td class="p-4">
+                        <select onchange="assignDelivery('{{ sale.id }}', this.value)" class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 outline-none transition-all">
+                            <option value="">-- Chọn NV --</option>
+                            {% for emp in employees %}
+                            <option value="{{ emp.id }}" {{ 'selected' if sale.delivery_employee_id == emp.id }}>{{ emp.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td class="p-4 font-bold text-gray-800">{{ "{:,.0f}".format(sale["price_at_sale"]) }}</td>
+
+                    <td class="p-4">
+                        <div class="flex flex-col space-y-1">
+                            <button onclick="toggleStatus('{{ sale.id }}', 'completed')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-green-500 hover:text-white transition-all duration-300">
+                                Đang giao
+                            </button>
+                            <button onclick="toggleStatus('{{ sale.id }}', 'pending')" class="text-[9px] text-gray-400 hover:text-red-500 underline transition-colors">Trở về</button>
+                        </div>
+                    </td>
+
+                    <!-- <td class="p-4 text-gray-400 text-sm js-tooltip-trigger cursor-help">
+                        <span class="block max-w-[100px] truncate">{{ sale["note"] if sale["note"] else "-" }}</span>
+                        {% if sale["note"] and sale["note"]|length > 20 %}
+                        <div class="hidden tooltip-template">
+                            <div class="w-64 italic leading-relaxed">{{ sale["note"] }}</div>
+                        </div>
+                        {% endif %}
+                    </td> -->
+                    <td class="p-4 flex items-center justify-center space-x-2">
+                        <a href="{{ url_for('sale.view', id=sale['id']) }}" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Xem chi tiết">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </a>
+                        <a href="{{ url_for('sale.edit', id=sale['id']) }}" class="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Chỉnh sửa">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </a>
+                        <button onclick="deleteSale('{{ sale['id'] }}', '{{ sale['customer_name'] }}')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Xóa đơn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Đơn hàng đã xong -->
+        <div>
+          <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+            <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+            Đơn hàng đã hoàn thành
+          </h3>
+          <div class="overflow-x-auto bg-white shadow-lg rounded-xl border border-gray-100 opacity-80 hover:opacity-100 transition-opacity">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-bold tracking-wider">
+                  <th class="p-4 border-b">Bên mua</th>
+                  <th class="p-4 border-b">SĐT</th>
+                  <th class="p-4 border-b">Địa chỉ</th>
+                  <th class="p-4 border-b">Sản phẩm</th>
+                  <th class="p-4 border-b">Thời gian</th>
+                  <th class="p-4 border-b">Nhân viên giao</th>
+                  <th class="p-4 border-b">Số tiền</th>
+                  <th class="p-4 border-b">Trạng thái</th>
+                  <th class="p-4 border-b">Tác vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sale in completed_sales %}
+                <tr class="border-b hover:bg-gray-50/80 transition-colors whitespace-nowrap">
+                    <td class="p-4 text-gray-500 italic truncate max-w-[150px]" title="{{ sale["customer_name"] }}">{{ sale["customer_name"] }}</td>
+                    <td class="p-4 text-gray-400 text-sm">{{ sale["customer_phone"] }}</td>
+                    <td class="p-4 text-gray-400 text-sm truncate max-w-[200px]" title="{{ sale['customer_address'] }}">{{ sale["customer_address"] }}</td>
+                    <td class="p-4 text-gray-500 truncate max-w-[150px]">{% if sale["products"] %}{{ sale["products"][0]["name"] }} ...{% endif %}</td>
+                    <td class="p-4 text-gray-400 text-xs">{{ sale["date_completed"] }}</td>
+                    <td class="p-4 text-gray-600 font-medium">{{ sale["delivery_name"] }}</td>
+                    <td class="p-4 font-bold text-gray-400">{{ "{:,.0f}".format(sale["price_at_sale"]) }}</td>
+                    <td class="p-4">
+                        <button onclick="toggleStatus('{{ sale.id }}','delivering')" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-blue-500 hover:text-white transition-all">
+                            Hoàn thành
+                        </button>
+                    </td>
+                    <td class="p-4 flex items-center justify-center space-x-2">
+                        <a href="{{ url_for('sale.view', id=sale['id']) }}" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all inline-block" title="Xem chi tiết">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </a>
+                        <button onclick="deleteSale('{{ sale['id'] }}', '{{ sale['customer_name'] }}')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Xóa đơn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<!-- ===== MODAL ALERT ===== -->
+<div id="modal-alert" class="fixed inset-0 z-[9998] flex items-center justify-center hidden" role="dialog" aria-modal="true">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-alert-backdrop"></div>
+  <div id="modal-alert-box" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden
+      transform transition-all duration-300 scale-95 opacity-0">
+    <div id="modal-alert-header" class="px-6 pt-6 pb-4 flex items-start gap-4">
+      <div id="modal-alert-icon" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"></div>
+      <div>
+        <p id="modal-alert-title" class="font-bold text-gray-800 text-base leading-snug"></p>
+        <p id="modal-alert-message" class="text-sm text-gray-500 mt-1 leading-relaxed whitespace-pre-wrap"></p>
+      </div>
+    </div>
+    <div class="px-6 pb-5 flex justify-end">
+      <button id="modal-alert-ok" class="px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200
+          bg-gray-900 text-white hover:bg-gray-700 active:scale-95">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL CONFIRM ===== -->
+<div id="modal-confirm" class="fixed inset-0 z-[9998] flex items-center justify-center hidden" role="dialog" aria-modal="true">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-confirm-backdrop"></div>
+  <div id="modal-confirm-box" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden
+      transform transition-all duration-300 scale-95 opacity-0">
+    <div id="modal-confirm-header" class="px-6 pt-6 pb-4 flex items-start gap-4">
+      <div id="modal-confirm-icon" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"></div>
+      <div class="flex-1">
+        <p id="modal-confirm-title" class="font-bold text-gray-800 text-base leading-snug"></p>
+        <p id="modal-confirm-message" class="text-sm text-gray-500 mt-1 leading-relaxed"></p>
+        <div id="modal-confirm-detail" class="mt-3 bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs text-gray-600 space-y-1 hidden"></div>
+      </div>
+    </div>
+    <div class="px-6 pb-5 flex gap-2 justify-end">
+      <button id="modal-confirm-cancel" class="px-5 py-2 rounded-xl text-sm font-semibold
+          bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all duration-200 active:scale-95">Hủy</button>
+      <button id="modal-confirm-ok" class="px-5 py-2 rounded-xl text-sm font-semibold
+          text-white transition-all duration-200 active:scale-95">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast-container" class="fixed top-5 right-5 z-[10000] flex flex-col gap-2 items-end"></div>
+
+<div id="tooltip-portal" class="fixed hidden z-[9999] pointer-events-none opacity-0 transition-opacity duration-200">
+    <div id="tooltip-content" class="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-2xl relative">
+        <div id="tooltip-body"></div>
+        <div class="absolute w-3 h-3 bg-gray-900 rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></div>
+    </div>
+</div>
+
+<!-- Modal: Review Nhập liệu -->
+<div id="modal-import-review" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-import-backdrop"></div>
+  <div id="modal-import-box" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 flex flex-col max-h-[90vh] transition-all transform scale-95 opacity-0">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50/50 rounded-t-2xl">
+      <div>
+        <h3 class="font-bold text-gray-800 text-lg">Kiểm tra thông tin nhập</h3>
+        <p class="text-xs text-indigo-600 font-medium">Vui lòng kiểm tra lại các mục đã trích xuất bên dưới</p>
+      </div>
+      <button onclick="closeImportModal()" class="p-2 hover:bg-white rounded-xl text-gray-400 hover:text-gray-600 transition">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+      <div class="mb-6 px-4 py-3 bg-indigo-50/30 border border-indigo-100/50 rounded-2xl">
+        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Bên mua (Phát hiện)</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-indigo-300 uppercase">Gốc</span>
+                <input type="text" id="reviewed-customer-name" class="w-full border p-3 pl-12 rounded-xl bg-gray-50 text-gray-600 outline-none text-sm font-medium" readonly />
+            </div>
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-indigo-500 uppercase">Khớp</span>
+                <select id="reviewed-customer-match" class="w-full border-2 border-indigo-100 p-3 pl-12 rounded-xl outline-none focus:border-indigo-500 transition text-sm font-bold text-indigo-700 appearance-none bg-white"></select>
+            </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Sản phẩm & Số lượng</label>
+        <div class="border rounded-2xl overflow-hidden shadow-sm">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] tracking-wider border-b">
+              <tr>
+                <th class="px-6 py-4">Nội dung trích xuất</th>
+                <th class="px-6 py-4">Khớp hệ thống</th>
+                <th class="px-6 py-4 text-center">Số lượng</th>
+                <th class="px-6 py-4 text-center">Tác vụ</th>
+              </tr>
+            </thead>
+            <tbody id="import-review-body">
+              <!-- Rows will be added via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 border-t border-gray-100 flex gap-3 justify-end items-center bg-gray-50/30 rounded-b-2xl">
+        <p id="extraction-msg" class="text-xs text-gray-400 italic mr-auto"></p>
+        <button onclick="closeImportModal()" class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95">Hủy</button>
+        <button id="btn-confirm-import" class="px-8 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition active:scale-95">Tạo hóa đơn</button>
+    </div>
+  </div>
+</div>
+
+<!-- <script src="../js/sale.js"></script> -->
+<script src="{{ url_for('static', filename='js/sale.js') }}"></script>
+{% include 'chatbot.html' %}
+</body>
+</html>

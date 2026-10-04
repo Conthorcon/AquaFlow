@@ -1,0 +1,11 @@
+AquaFlow AI Engine | Lead AI Engineer
+
+Architected & Implemented hệ thống Intelligent Document Processing (IDP) bằng LayoutLMv3 và PaddleOCR, đạt độ chính xác 96% trong trích xuất dữ liệu hóa đơn không cấu trúc.
+
+Built hệ thống RAG Chatbot (Retrieval-Augmented Generation) tích hợp LangChain & Vector Database (ChromaDB), hỗ trợ khả năng Function Calling giúp tự động hóa nghiệp vụ truy vấn tồn kho và đặt hàng qua ngôn ngữ tự nhiên.
+
+Optimized AI Inference: Chuyển đổi mô hình sang định dạng ONNX, giúp giảm độ trễ (latency) của quá trình trích xuất từ 3s xuống < 500ms.
+
+Designed Asynchronous Pipeline bằng Celery & Redis để xử lý các tác vụ AI nặng (Background Tasks), đảm bảo trải nghiệm người dùng mượt mà (UI/UX) và khả năng mở rộng hệ thống cao.
+
+Công nghệ: Python, PyTorch, LangChain, FastAPI, Redis, Docker, PostgreSQL (pgvector).
