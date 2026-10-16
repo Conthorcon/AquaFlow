@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 from utils.import_logic import parse_csv_data, parse_ocr_data
 from src.database.models import db, Sale, SaleItem, Customer, Product, ProductPriceConfig
 from datetime import datetime
+from utils.ai_client import AIServiceError
 
 sale_import_bp = Blueprint('sale_import', __name__)
 
@@ -22,6 +23,8 @@ def extract_data():
             return jsonify({"status": "error", "message": "Định dạng file không hỗ trợ"}), 400
             
         return jsonify(data)
+    except AIServiceError as e:
+        return jsonify({"status": "error", "message": str(e)}), e.status_code
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

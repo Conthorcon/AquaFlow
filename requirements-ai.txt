@@ -1,0 +1,13 @@
+transformers==4.45
+torch==2.4.1 
+torchvision==0.19.1 
+torchaudio==2.4.1 
+flask
+Pillow
+vietocr
+gdown
+setuptools<81
+ultralytics
+peft
+#python -m flask --app app run --port 4849 --no-reload
+waitress

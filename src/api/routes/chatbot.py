@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.chatbot.src.txt2sql import generate_sql
+from utils.ai_client import ask_ai, AIServiceError
 
 chatbot_bp = Blueprint('chatbot', __name__, url_prefix='/api/chatbot')
 
@@ -8,14 +8,17 @@ def ask():
     """
     API để nhận câu hỏi từ frontend và trả về phản hồi từ hệ thống RAG/SQL Agent Langchain.
     """
-    data = request.get_json()
-    if not data or 'message' not in data:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not isinstance(data.get('message'), str) or not data['message'].strip() or len(data['message']) > 8000:
         return jsonify({"error": "No message provided"}), 400
         
     user_message = data['message']
     
     # Process with Langchain agent
-    bot_response = generate_sql(user_message)
+    try:
+        bot_response = ask_ai(user_message)
+    except AIServiceError as exc:
+        return jsonify(error=str(exc)), exc.status_code
 
     if bot_response == "OUT_OF_SCOPE":
         bot_response = "Xin lỗi, tôi không thể trả lời câu hỏi này."

@@ -29,7 +29,7 @@ def load_tokenizer(base_model_id, lora_path):
 def load_model(base_model_id, lora_path):
     base_model = AutoModelForCausalLM.from_pretrained(
         base_model_id,
-        torch_dtype=torch.bfloat16,
+        torch_dtype=(torch.bfloat16 if DEVICE == "cuda" and torch.cuda.is_bf16_supported() else torch.float32),
         trust_remote_code=True
     ).to(DEVICE)
 
@@ -53,7 +53,7 @@ def inference_text(messages, tokenizer, model, device=DEVICE, max_new_tokens=128
         prompt,
         return_tensors="pt",
         truncation=True,
-        max_length=max_new_tokens*2
+        max_length=4096
     ).to(device)
 
     with torch.no_grad():
