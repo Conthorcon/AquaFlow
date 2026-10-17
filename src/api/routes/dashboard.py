@@ -1,7 +1,8 @@
+from src.database.date_sql import display_date
 from flask import render_template, flash, redirect, request, Response, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime, timedelta
-from sqlalchemy import func, text, cast, Integer
+from sqlalchemy import func, text, cast, Integer, case
 from src.database.models import *
 
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -183,30 +184,26 @@ def get_sale_data():
     else:
         if sales_period == "hour":
             stats = query.with_entities(
-                # SQLite: strftime('%H:00', date, '+7 hours')
-                func.strftime("%H:00", Sale.date_created, "+7 hours").label("label"),
+                display_date("%H:00", Sale.date_created).label("label"),
                 func.count(Sale.id)
             ).group_by(text("label")).order_by(text("label")).all()
 
         elif sales_period == "day":
             stats = query.with_entities(
-                # SQLite: strftime('%Y-%m-%d', date, '+7 hours')
-                func.strftime("%d/%m", Sale.date_created, "+7 hours").label("label"),
+                display_date("%d/%m", Sale.date_created).label("label"),
                 func.count(Sale.id)
             ).group_by(text("label")).order_by(text("label")).all()
 
         elif sales_period == "month":
             stats = query.with_entities(
-                # SQLite: strftime('%Y-%m', date, '+7 hours')
-                cast(func.strftime("%m", Sale.date_created, "+7 hours"), Integer).label("label"),
+                cast(display_date("%m", Sale.date_created), Integer).label("label"),
                 func.count(Sale.id)
             ).group_by(text("label")).order_by(text("label")).all()
 
 
         else: #all
             stats = query.with_entities(
-                # SQLite: strftime('%Y-%m', date, '+7 hours')
-                func.strftime("%Y", Sale.date_created, "+7 hours").label("label"),
+                display_date("%Y", Sale.date_created).label("label"),
                 func.count(Sale.id)
             ).group_by(text("label")).order_by(text("label")).all()
 
@@ -242,40 +239,39 @@ def get_revenue_data():
     stats = []
 
     if revenue_metric == 'product':
-        stats = query.join(SaleItem).with_entities(
+        stats = query.join(SaleItem).join(Product).with_entities(
             Product.name,
             func.sum(SaleItem.quantity * SaleItem.price_at_sale)
-        ).order_by(func.sum(SaleItem.quantity * SaleItem.price_at_sale).desc()).all()
+        ).group_by(Product.id, Product.name).order_by(func.sum(SaleItem.quantity * SaleItem.price_at_sale).desc()).all()
 
     else:
         if revenue_period == "day":
             stats = query.join(SaleItem).with_entities(
-                # SQLite: strftime('%H:00', date, '+7 hours')
-                func.strftime("%d/%m", Sale.date_created, "+7 hours").label("label"),
+                display_date("%d/%m", Sale.date_created).label("label"),
                 func.sum(SaleItem.quantity * SaleItem.price_at_sale)
             ).group_by(text("label")).order_by(text("label")).all()
 
         elif revenue_period == "quarter":
             # Công thức: (Tháng - 1) / 3 + 1
-            # Trong SQLite, ta lấy tháng bằng strftime('%m', ...)
-            quarter_num = (func.cast(func.strftime("%m", Sale.date_created, "+7 hours"), db.Integer) - 1) / 3 + 1
-    
+            # CASE works on both databases without SQLite printf or integer division.
+            month_num = cast(display_date("%m", Sale.date_created), Integer)
+            quarter_label = case((month_num <= 3, "Q1"), (month_num <= 6, "Q2"),
+                                 (month_num <= 9, "Q3"), else_="Q4")
+
             stats = query.join(SaleItem).with_entities(
-                func.printf("Q%d", quarter_num).label("label"),
+                quarter_label.label("label"),
                 func.sum(SaleItem.quantity * SaleItem.price_at_sale)
             ).group_by(text("label")).order_by(text("label")).all()
 
         elif revenue_period == "month":
             stats = query.join(SaleItem).with_entities(
-                # SQLite: strftime('%Y-%m', date, '+7 hours')
-                func.strftime("%m/%Y", Sale.date_created, "+7 hours").label("label"),
+                display_date("%m/%Y", Sale.date_created).label("label"),
                 func.sum(SaleItem.quantity * SaleItem.price_at_sale)
             ).group_by(text("label")).order_by(text("label")).all()
         
         elif revenue_period == "year": 
             stats = query.join(SaleItem).with_entities(
-                # SQLite: strftime('%Y-%m', date, '+7 hours')
-                func.strftime("%Y", Sale.date_created, "+7 hours").label("label"),
+                display_date("%Y", Sale.date_created).label("label"),
                 func.sum(SaleItem.quantity * SaleItem.price_at_sale)
             ).group_by(text("label")).order_by(text("label")).all()
 
@@ -304,7 +300,7 @@ def get_expense_data():
                              func.extract("year", Purchase.date) == today.year)
 
         stats = query.with_entities(
-            func.strftime("%H:00", Purchase.date, "+7 hours").label("label"),
+            display_date("%H:00", Purchase.date).label("label"),
             func.sum(Purchase.total_amount)
         ).group_by(text("label")).order_by(text("label")).all()
             
@@ -313,7 +309,7 @@ def get_expense_data():
                              func.extract("year", Purchase.date) == today.year)
 
         stats = query.with_entities(
-            func.strftime("%d/%m", Purchase.date, "+7 hours").label("label"),
+            display_date("%d/%m", Purchase.date).label("label"),
             func.sum(Purchase.total_amount)
         ).group_by(text("label")).order_by(text("label")).all()
 
@@ -321,12 +317,12 @@ def get_expense_data():
         query = query.filter(func.extract("year", Purchase.date) == today.year)
 
         stats = query.with_entities(
-            func.strftime("%m/%Y", Purchase.date, "+7 hours").label("label"),
+            display_date("%m/%Y", Purchase.date).label("label"),
             func.sum(Purchase.total_amount)
         ).group_by(text("label")).order_by(text("label")).all()
     else:
         stats = query.with_entities(
-            func.strftime("%Y", Purchase.date, "+7 hours").label("label"),
+            display_date("%Y", Purchase.date).label("label"),
             func.sum(Purchase.total_amount)
         ).group_by(text("label")).order_by(text("label")).all()
 

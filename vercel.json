@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python build_vercel.py",
+  "functions": {
+    "app.py": {
+      "maxDuration": 240,
+      "excludeFiles": "{models,datasets,data,instance,kaggle,evaluation,tests,src/chatbot,src/ocr}/**"
+    }
+  }
+}

@@ -7,3 +7,14 @@ datasets
 kaggle
 *.safetensors
 *.whl
+
+# Local secrets, environments and generated Vercel build output.
+.venv/
+.venv-*/
+.env
+.env.*
+!.env.example
+.vercel/
+public/static/
+instance/
+__pycache__/

@@ -1,3 +1,4 @@
+from src.database.date_sql import display_date
 from flask import render_template, flash, redirect, request, Response, Blueprint, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime, timedelta
@@ -31,9 +32,9 @@ def sale():
         Customer.name.label('customer_name'),
         Customer.phone.label('customer_phone'),
         Customer.address.label('customer_address'),
-        func.strftime("%d/%m/%Y %H:%M", Sale.date_created, "+7 hours").label('date_created'),
-        func.strftime("%d/%m/%Y %H:%M", Sale.date_delivery, "+7 hours").label('date_delivery'),
-        func.strftime("%d/%m/%Y %H:%M", Sale.date_completed, "+7 hours").label('date_completed'),
+        display_date("%d/%m/%Y %H:%M", Sale.date_created).label('date_created'),
+        display_date("%d/%m/%Y %H:%M", Sale.date_delivery).label('date_delivery'),
+        display_date("%d/%m/%Y %H:%M", Sale.date_completed).label('date_completed'),
         Product.name.label('product_name'),
         SaleItem.quantity,
         SaleItem.price_at_sale,

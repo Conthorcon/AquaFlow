@@ -2,3 +2,4 @@ flask
 flask_sqlalchemy
 requests
 waitress
+psycopg[binary]>=3.2,<4
